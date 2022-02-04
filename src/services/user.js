@@ -30,7 +30,7 @@ export function logout() {
 
 
 export async function getUser(data) {
-  return request(`${BASE_URL}/user`, METHOD.GET, data)
+  return request(`${BASE_URL}/users`, METHOD.GET, data)
 }
 
 export async function feed(data) {
@@ -49,5 +49,5 @@ export default {
   logout,
   getRoutesConfig,
   feed,
-  getUserListApi,
+  getUser,
 }
