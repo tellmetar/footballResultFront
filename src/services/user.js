@@ -30,7 +30,7 @@ export function logout() {
 
 
 export async function getUser(data) {
-  return request(`${BASE_URL}/users`, METHOD.GET, data)
+  return request(`${BASE_URL}/user`, METHOD.GET, data)
 }
 
 export async function feed(data) {
@@ -41,7 +41,13 @@ export async function getMaterailService(data) {
   return request(`${BASE_URL}/material`, METHOD.GET, data)
 }
 
+export async function createUserApi(data) {
+  return request(`${BASE_URL}/user`, METHOD.POST, data)
+}
 
+export async function createResultApi(data) {
+  return request(`${BASE_URL}/result`, METHOD.POST, data)
+}
 
 
 export default {
@@ -50,4 +56,5 @@ export default {
   getRoutesConfig,
   feed,
   getUser,
+  createUserApi,
 }
