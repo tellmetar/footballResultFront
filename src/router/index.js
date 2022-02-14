@@ -21,6 +21,11 @@ export default new VueRouter({
             path: '/addResult',
             name: 'addResult',
             component: () => import("@/components/addResult")
-        }
+        },
+        {
+            path: '/result',
+            name: 'result',
+            component: () => import("@/components/result")
+        },
     ]
 })

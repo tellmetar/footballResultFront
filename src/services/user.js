@@ -49,6 +49,14 @@ export async function createResultApi(data) {
   return request(`${BASE_URL}/result`, METHOD.POST, data)
 }
 
+export async function getResultApi(data) {
+  return request(`${BASE_URL}/result`, METHOD.GET, data)
+}
+
+export async function getWinningRateApi(data) {
+  return request(`${BASE_URL}/winningRate`, METHOD.GET, data)
+}
+
 
 export default {
   login,

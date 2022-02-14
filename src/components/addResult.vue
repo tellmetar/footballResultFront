@@ -122,8 +122,8 @@
             </a-select>
         </a-form-model-item>
 
-        <a-form-model-item  label="胜负结果">
-            <a-
+        <a-form-model-item  label="比分" >
+            <a-input v-model="form.score"/>
         </a-form-model-item>
         
         <button @click="confirm"> 确认 </button>
