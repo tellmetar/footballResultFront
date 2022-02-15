@@ -1,5 +1,8 @@
 <template>
   <div class="home">
+        <h3 :style="{ margin: '16px 0' }">
+            战绩
+        </h3>
     <div id="components-form-demo-advanced-search">
       <a-form-model layout="inline" class="ant-advanced-search-form" :model="q">
         <a-row>
@@ -57,6 +60,10 @@
 <br/>
 <br/>
 
+
+        <h3 :style="{ margin: '16px 0' }">
+            个人积分
+        </h3>
     <div>
         <a-form-model layout="inline" class="ant-advanced-search-form" :model="q">
             <a-row>
