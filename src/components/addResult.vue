@@ -160,7 +160,15 @@ export default {
               team1: this.targetKeys1,
               team2: this.targetKeys2,
           }).then(r => {
-              console.log("r", r)
+              if (r.status == 200 && r.data.code == 200) {
+
+                this.$message.success("添加成功")
+                console.log("r", r)
+                this.$router.push("/result")
+              } else {
+                this.$message.error(r.data.data)
+              }
+
           })
       },
     onChangeDate(value, s){
