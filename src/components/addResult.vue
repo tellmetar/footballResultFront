@@ -7,10 +7,10 @@
       </a-menu-item>
       <a-menu-item key="app">
         <a-icon type="profile" />
-        <router-link to="/result">战绩管理 </router-link>
+        <router-link to="/result">战况管理 </router-link>
       </a-menu-item>
     </a-menu>
-    <h3 :style="{ margin: '16px 0' }">新增/修改 战绩</h3>
+    <h3 :style="{ margin: '16px 0' }">{{ isEdit ? "编辑" : "新建" }}战况</h3>
 
     <a-transfer
       :dataSource="userData"
@@ -72,7 +72,7 @@
       :wrapper-col="{ span: 1 }"
     >
       <a-form-model-item label="轮数">
-        <a-input-number v-model="form.round" />
+        <a-input-number :disabled="isEdit" v-model="form.round" />
       </a-form-model-item>
       <a-form-model-item label="比赛日">
         <a-date-picker @change="onChangeDate" />
@@ -115,10 +115,14 @@
       </a-form-model-item>
 
       <a-form-model-item label="胜负结果">
-        <a-select v-model="form.result" style="width: 120px" @change="handleChangeResult">
-          <a-select-option value=1> 队伍1赢 </a-select-option>
-          <a-select-option value=3> 平 </a-select-option>
-          <a-select-option value=2> 队伍2赢 </a-select-option>
+        <a-select
+          v-model="form.result"
+          style="width: 120px"
+          @change="handleChangeResult"
+        >
+          <a-select-option value="1"> 队伍1赢 </a-select-option>
+          <a-select-option value="3"> 平 </a-select-option>
+          <a-select-option value="2"> 队伍2赢 </a-select-option>
         </a-select>
       </a-form-model-item>
 
@@ -137,6 +141,7 @@ import { getUser, createResultApi, getResultDetailApi } from "../services/user";
 export default {
   data() {
     return {
+      isEdit: false,
       form: {
         captain1_uid: undefined,
         captain2_uid: undefined,
@@ -149,7 +154,8 @@ export default {
   },
   created() {
     if (this.$route.query.id != undefined) {
-      this.getResultDetail()
+      this.isEdit = true;
+      this.getResultDetail();
     }
   },
   mounted() {
@@ -158,25 +164,25 @@ export default {
   methods: {
     getResultDetail() {
       getResultDetailApi(this.$route.query.id).then((r) => {
-        if (r.data && r.data.result){
-          this.form = r.data.result
-          if (this.form.result){ //fixme: 这里有更好的解决方案吗?
-            this.form.result = this.form.result + ""
+        if (r.data && r.data.result) {
+          this.form = r.data.result;
+          if (this.form.result) {
+            //fixme: 这里有更好的解决方案吗?
+            this.form.result = this.form.result + "";
           }
         }
-        if (r.data && r.data.team){
-          for (const e of r.data.team){
-            if (e.team == 1){
-              this.targetKeys1.push(e.uid +"")
+        if (r.data && r.data.team) {
+          for (const e of r.data.team) {
+            if (e.team == 1) {
+              this.targetKeys1.push(e.uid + "");
             }
-            if (e.team == 2){
-              this.targetKeys2.push(e.uid +"")
+            if (e.team == 2) {
+              this.targetKeys2.push(e.uid + "");
             }
-
           }
         }
-        console.log(this.targetKeys1,"===========")
-      })
+        console.log(this.targetKeys1, "===========");
+      });
     },
     confirm() {
       if (!this.form.round) {

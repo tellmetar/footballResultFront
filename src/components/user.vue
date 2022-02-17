@@ -3,7 +3,7 @@
   <a-menu mode="horizontal">
     <a-menu-item key="mail"> <a-icon type="usergroup-add" /> <router-link to="/user">球员管理</router-link> </a-menu-item>
     <a-menu-item key="app">
-      <a-icon type="profile" /> <router-link to="/result">战绩管理  </router-link> 
+      <a-icon type="profile" /> <router-link to="/result">战况管理  </router-link> 
     </a-menu-item>
   </a-menu>
     <h3 :style="{ margin: '16px 0' }">球员</h3>

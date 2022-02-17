@@ -2,14 +2,15 @@
   <div class="home">
     <a-menu mode="horizontal">
       <a-menu-item key="mail">
-        <a-icon type="usergroup-add" /> <router-link to="/user">球员管理</router-link>
+        <a-icon type="usergroup-add" />
+        <router-link to="/user">球员管理</router-link>
       </a-menu-item>
       <a-menu-item key="app">
         <a-icon type="profile" />
-        <router-link to="/result">战绩管理 </router-link>
+        <router-link to="/result">战况管理 </router-link>
       </a-menu-item>
     </a-menu>
-    <h3 :style="{ margin: '16px 0' }">战绩</h3>
+    <h3 :style="{ margin: '16px 0' }">战况</h3>
     <div id="components-form-demo-advanced-search">
       <a-form-model layout="inline" class="ant-advanced-search-form" :model="q">
         <a-row>
@@ -31,7 +32,7 @@
         <a-col>
           <a-space>
             <a-button type="primary" @click="jumpToAddResult">
-              新增赛果
+              新增战况
             </a-button>
           </a-space>
         </a-col>
@@ -50,6 +51,9 @@
           </span>
           <span slot="captain2_uid" slot-scope="text">
             {{ displayName(text) }}
+          </span>
+          <span slot="result" slot-scope="text">
+            {{ displayResult(text) }}
           </span>
           <span slot="action" slot-scope="text, record">
             <!-- <a-divider type="vertical" /> -->
@@ -70,7 +74,11 @@
 
     <h3 :style="{ margin: '16px 0' }">个人积分</h3>
     <div>
-      <a-form-model layout="inline" class="ant-advanced-search-form" :model="q">
+      <a-form-model
+        layout="inline"
+        class="ant-advanced-search-form"
+        :model="qu"
+      >
         <a-row>
           <a-col>
             <a-form-item>
@@ -79,7 +87,7 @@
                 placeholder="Select a person"
                 option-filter-prop="children"
                 style="width: 200px"
-                v-model="q.uid"
+                v-model="qu.uid"
               >
                 <a-select-option v-for="d in userList" :key="d.id">
                   {{ d.name }}
@@ -88,7 +96,7 @@
             </a-form-item>
 
             <a-button type="primary" @click="handleChange"> Search </a-button>
-            <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
+            <a-button :style="{ marginLeft: '8px' }" @click="handleReset2">
               Clear
             </a-button>
           </a-col>
@@ -98,7 +106,11 @@
 
     <div>
       <a-row>
-        <a-table :columns="winningColumns" :data-source="WinningList" :pagination="paginationOpt2">
+        <a-table
+          :columns="winningColumns"
+          :data-source="WinningList"
+          :pagination="paginationOpt2"
+        >
           <span slot="uid" slot-scope="text"> {{ displayName(text) }} </span>
         </a-table>
       </a-row>
@@ -178,9 +190,10 @@ const columns = [
     scopedSlots: { customRender: "captain2_uid" },
   },
   {
-    title: "赛果",
+    title: "战况",
     dataIndex: "result",
     key: "result",
+    scopedSlots: { customRender: "result" },
   },
   {
     title: "比分",
@@ -191,6 +204,7 @@ const columns = [
     title: "备注",
     dataIndex: "remark",
     key: "remark",
+    ellipsis: true,
   },
 
   {
@@ -216,6 +230,7 @@ export default {
       confirmLoading: false,
       form: {},
       q: {},
+      qu: {},
       paginationOpt: {
         defaultCurrent: 1, // 默认当前页数
         defaultPageSize: 5, // 默认当前页显示数据的大小
@@ -271,16 +286,15 @@ export default {
       this.getWinningRates();
     },
     getWinningRates() {
-      getWinningRateApi(this.q).then((r) => {
-        console.log(r);
+      getWinningRateApi(this.qu).then((r) => {
+        // console.log(r);
         this.WinningList.push(r.data.data);
       });
     },
     jumpToAddResult() {
       this.$router.push("/addResult");
     },
-    displayName(uid, record) {
-      console.log(record);
+    displayName(uid) {
       let name = "";
       this.userList.forEach((e) => {
         if (e.id == uid) {
@@ -288,6 +302,15 @@ export default {
         }
       });
       return name;
+    },
+    displayResult(r) {
+      if (r == 1) {
+        return "队伍1赢";
+      } else if (r == 2) {
+        return "队伍2赢";
+      } else if (r == 3) {
+        return "平";
+      }
     },
     getUserList() {
       getUser({
@@ -300,11 +323,18 @@ export default {
     },
 
     del() {},
-    edit(a, r){
-        this.$router.push({path:"/addResult", query: {id: r.id}})
+    edit(a, r) {
+      this.$router.push({ path: "/addResult", query: { id: r.id } });
     },
     handleReset() {
       this.q = {};
+      this.paginationOpt.defaultCurrent = 1;
+      this.getResult();
+    },
+    handleReset2() {
+      this.qu = {};
+      this.paginationOpt2.defaultCurrent = 1;
+      this.getWinningRates();
     },
     getResult() {
       this.loading = true;
@@ -320,10 +350,10 @@ export default {
         this.paginationOpt = paginationOpt;
         console.log("this.pag", this.paginationOpt);
         this.ResultList = r.data.data;
-        for (let u of this.ResultList){
-          u.key = u.id
+        for (let u of this.ResultList) {
+          u.key = u.id;
         }
-      })
+      });
     },
   },
 };
