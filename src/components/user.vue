@@ -1,8 +1,12 @@
 <template>
-
-
-
   <div class="home">
+  <a-menu mode="horizontal">
+    <a-menu-item key="mail"> <a-icon type="usergroup-add" /> <router-link to="/user">球员管理</router-link> </a-menu-item>
+    <a-menu-item key="app">
+      <a-icon type="profile" /> <router-link to="/result">战绩管理  </router-link> 
+    </a-menu-item>
+  </a-menu>
+    <h3 :style="{ margin: '16px 0' }">球员</h3>
     <div id="components-form-demo-advanced-search">
       <a-form-model layout="inline" class="ant-advanced-search-form" :model="q">
         <a-row>
@@ -82,7 +86,7 @@
 
 <script>
 import { getUser, createUserApi } from "../services/user";
-
+// import { MyMenu } from "./menu.vue";
 const columns = [
   {
     dataIndex: "name",
@@ -104,9 +108,12 @@ const columns = [
 ];
 
 export default {
-  name: "HelloWorld",
+  name: "User",
   props: {
     msg: String,
+  },
+  components:{
+    // MyMenu
   },
   data() {
     return {
@@ -153,16 +160,20 @@ export default {
       this.loading = true;
       getUser({
         ...this.form,
+        ...this.q,
         page: this.paginationOpt.defaultCurrent,
         size: this.paginationOpt.defaultPageSize,
       }).then((r) => {
-        console.log(r);
+        // console.log(r);
         const paginationOpt = { ...this.paginationOpt };
         paginationOpt.total = r.data.data.total;
         this.loading = false;
         this.paginationOpt = paginationOpt;
         console.log("this.pag", this.paginationOpt);
         this.userList = r.data.data.userList;
+        for (let u of this.userList){
+          u.key = u.id
+        }
       });
     },
     showModal() {

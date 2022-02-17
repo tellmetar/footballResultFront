@@ -1,214 +1,241 @@
 <template>
-<div>
+  <div>
+    <a-menu mode="horizontal">
+      <a-menu-item key="mail">
+        <a-icon type="usergroup-add" />
+        <router-link to="/user">球员管理</router-link>
+      </a-menu-item>
+      <a-menu-item key="app">
+        <a-icon type="profile" />
+        <router-link to="/result">战绩管理 </router-link>
+      </a-menu-item>
+    </a-menu>
+    <h3 :style="{ margin: '16px 0' }">新增/修改 战绩</h3>
 
-
-  <a-transfer
-    :dataSource="userData"
-    show-search
-    :list-style="{
-      width: '250px',
-      height: '300px',
-    }"
-    :operations="['to Team 1', 'delete']"
-    :target-keys="targetKeys1"
-    :render="item => `${item.name}-${item.number}`"
-    :titles="['', '队伍1']"
-    :locale="{itemsUnit:'人'}"
-    @change="handleChange"
-  >
-    <a-button
-      slot="footer"
-      size="small"
-      style="float:right;margin: 5px"
-      @click="getUserList"
+    <a-transfer
+      :dataSource="userData"
+      show-search
+      :list-style="{
+        width: '250px',
+        height: '300px',
+      }"
+      :operations="['to Team 1', 'delete']"
+      :target-keys="targetKeys1"
+      :render="(item) => `${item.name}-${item.number}`"
+      :titles="['', '队伍1']"
+      :locale="{ itemsUnit: '人' }"
+      @change="handleChange"
     >
-      reload
-    </a-button>
-    <span slot="notFoundContent">
-      没数据
-    </span>
-  </a-transfer>
+      <a-button
+        slot="footer"
+        size="small"
+        style="float: right; margin: 5px"
+        @click="getUserList"
+      >
+        reload
+      </a-button>
+      <span slot="notFoundContent"> 没数据 </span>
+    </a-transfer>
 
-<br/>
+    <br />
 
-  <a-transfer
-    :dataSource="userData"
-    show-search
-    :list-style="{
-      width: '250px',
-      height: '300px',
-    }"
-    :operations="['to Team 2', 'delete']"
-    :target-keys="targetKeys2"
-    :render="item => `${item.name}-${item.number}`"
-    :titles="['', '队伍2']"
-    :locale="{itemsUnit:'人'}"
-    @change="handleChange2"
-  >
-    <a-button
-      slot="footer"
-      size="small"
-      style="float:right;margin: 5px"
-      @click="getUserList"
+    <a-transfer
+      :dataSource="userData"
+      show-search
+      :list-style="{
+        width: '250px',
+        height: '300px',
+      }"
+      :operations="['to Team 2', 'delete']"
+      :target-keys="targetKeys2"
+      :render="(item) => `${item.name}-${item.number}`"
+      :titles="['', '队伍2']"
+      :locale="{ itemsUnit: '人' }"
+      @change="handleChange2"
     >
-      reload
-    </a-button>
-    <span slot="notFoundContent">
-      没数据
-    </span>
-  </a-transfer>
+      <a-button
+        slot="footer"
+        size="small"
+        style="float: right; margin: 5px"
+        @click="getUserList"
+      >
+        reload
+      </a-button>
+      <span slot="notFoundContent"> 没数据 </span>
+    </a-transfer>
 
-<br/>
+    <br />
 
     <a-form-model
-        :model="form"
-        :label-col="{ span: 9 }"
-        :wrapper-col="{ span: 1 }"
-      >
-        <a-form-model-item label="轮数">
-          <a-input-number v-model="form.round" />
-        </a-form-model-item>
-        <a-form-model-item label="比赛日">
-            <a-date-picker @change="onChangeDate"/>
-        </a-form-model-item>
-        <a-form-model-item label="队长1">
-            <a-select
-                show-search
-                :value="form.captain1_uid"
-                placeholder="input search text"
-                style="width: 200px"
-                :default-active-first-option="false"
-                :show-arrow="false"
-                :filter-option="false"
-                :not-found-content="null"
-                @search="handleSearch1"
-                @change="handleChangeCaptain1"
-            >
-            <a-select-option v-for="d in userData" :key="d.id">
+      :model="form"
+      :label-col="{ span: 9 }"
+      :wrapper-col="{ span: 1 }"
+    >
+      <a-form-model-item label="轮数">
+        <a-input-number v-model="form.round" />
+      </a-form-model-item>
+      <a-form-model-item label="比赛日">
+        <a-date-picker @change="onChangeDate" />
+      </a-form-model-item>
+      <a-form-model-item label="队长1">
+        <a-select
+          show-search
+          :value="form.captain1_uid"
+          placeholder="input search text"
+          style="width: 200px"
+          :default-active-first-option="false"
+          :show-arrow="false"
+          :filter-option="false"
+          :not-found-content="null"
+          @search="handleSearch1"
+          @change="handleChangeCaptain1"
+        >
+          <a-select-option v-for="d in userData" :key="d.id">
             {{ d.name }}
-            </a-select-option>
-            </a-select>
-        </a-form-model-item>
-        <a-form-model-item label="队长2">
-            <a-select
-                show-search
-                :value="form.captain2_uid"
-                placeholder="input search text"
-                style="width: 200px"
-                :default-active-first-option="false"
-                :show-arrow="false"
-                :filter-option="false"
-                :not-found-content="null"
-                @search="handleSearch2"
-                @change="handleChangeCaptain2"
-            >
-            <a-select-option v-for="d in userData" :key="d.id">
+          </a-select-option>
+        </a-select>
+      </a-form-model-item>
+      <a-form-model-item label="队长2">
+        <a-select
+          show-search
+          :value="form.captain2_uid"
+          placeholder="input search text"
+          style="width: 200px"
+          :default-active-first-option="false"
+          :show-arrow="false"
+          :filter-option="false"
+          :not-found-content="null"
+          @search="handleSearch2"
+          @change="handleChangeCaptain2"
+        >
+          <a-select-option v-for="d in userData" :key="d.id">
             {{ d.name }}
-            </a-select-option>
-            </a-select>
-        </a-form-model-item>
+          </a-select-option>
+        </a-select>
+      </a-form-model-item>
 
-        <a-form-model-item  v-model="form.result" label="胜负结果">
-            <a-select style="width: 120px" @change="handleChangeResult">
-            <a-select-option value="1">
-                队伍1赢
-            </a-select-option>
-            <a-select-option value="3">
-                平
-            </a-select-option>
-            <a-select-option value="2">
-                队伍2赢
-            </a-select-option>
-            </a-select>
-        </a-form-model-item>
+      <a-form-model-item label="胜负结果">
+        <a-select v-model="form.result" style="width: 120px" @change="handleChangeResult">
+          <a-select-option value=1> 队伍1赢 </a-select-option>
+          <a-select-option value=3> 平 </a-select-option>
+          <a-select-option value=2> 队伍2赢 </a-select-option>
+        </a-select>
+      </a-form-model-item>
 
-        <a-form-model-item  label="比分" >
-            <a-input v-model="form.score"/>
-        </a-form-model-item>
-        
-        <button @click="confirm"> 确认 </button>
+      <a-form-model-item label="比分">
+        <a-input v-model="form.score" />
+      </a-form-model-item>
 
-
-      </a-form-model>
-
-
+      <button @click="confirm">确认</button>
+      <button><router-link to="/result">取消</router-link></button>
+    </a-form-model>
   </div>
 </template>
 <script>
-import { getUser, createResultApi } from "../services/user";
+import { getUser, createResultApi, getResultDetailApi } from "../services/user";
 
 export default {
   data() {
     return {
-        form:{
-            captain1_uid:undefined,
-            captain2_uid:undefined,
-            result: 1
-        },
-        userData: [],
-        targetKeys1: [],
-        targetKeys2: [],
+      form: {
+        captain1_uid: undefined,
+        captain2_uid: undefined,
+        result: undefined,
+      },
+      userData: [],
+      targetKeys1: [],
+      targetKeys2: [],
     };
+  },
+  created() {
+    if (this.$route.query.id != undefined) {
+      this.getResultDetail()
+    }
   },
   mounted() {
     this.getUserList();
   },
   methods: {
-      confirm(){
-          createResultApi({
-              ...this.form,
-              team1: this.targetKeys1,
-              team2: this.targetKeys2,
-          }).then(r => {
-              if (r.status == 200 && r.data.code == 200) {
+    getResultDetail() {
+      getResultDetailApi(this.$route.query.id).then((r) => {
+        if (r.data && r.data.result){
+          this.form = r.data.result
+          if (this.form.result){ //fixme: 这里有更好的解决方案吗?
+            this.form.result = this.form.result + ""
+          }
+        }
+        if (r.data && r.data.team){
+          for (const e of r.data.team){
+            if (e.team == 1){
+              this.targetKeys1.push(e.uid +"")
+            }
+            if (e.team == 2){
+              this.targetKeys2.push(e.uid +"")
+            }
 
-                this.$message.success("添加成功")
-                console.log("r", r)
-                this.$router.push("/result")
-              } else {
-                this.$message.error(r.data.data)
-              }
-
+          }
+        }
+        console.log(this.targetKeys1,"===========")
+      })
+    },
+    confirm() {
+      if (!this.form.round) {
+        this.$message.error("把第几轮填下");
+      } else {
+        createResultApi({
+          ...this.form,
+          team1: this.targetKeys1,
+          team2: this.targetKeys2,
+        })
+          .then((r) => {
+            if (r.status == 200 && r.data.code == 200) {
+              this.$message.success("添加成功");
+              console.log("r", r);
+              this.$router.push("/result");
+            } else {
+              this.$message.error(r.data.data);
+            }
           })
-      },
-    onChangeDate(value, s){
-        console.log(value)
-        this.form.date = s
+          .catch((e) => {
+            console.log("e", e);
+            this.$message.error("系统错误,请不要联系ivan");
+          });
+      }
     },
-    handleChangeCaptain1(value){
-                      console.log("value", value)
-        this.form.captain1_uid = value
+    onChangeDate(value, s) {
+      console.log(value);
+      this.form.date = s;
     },
-    handleChangeCaptain2(value){
-        this.form.captain2_uid = value
+    handleChangeCaptain1(value) {
+      console.log("value", value);
+      this.form.captain1_uid = value;
     },
-    handleSearch1(){
-
+    handleChangeCaptain2(value) {
+      this.form.captain2_uid = value;
     },
-    handleSearch2(){
-
-    },
-    handleChangeResult(v){
-        this.result = v
+    handleSearch1() {},
+    handleSearch2() {},
+    handleChangeResult(v) {
+      this.result = v;
     },
     getUserList() {
       getUser({
-        size:150,
+        size: 150,
       }).then((r) => {
         console.log(r);
         this.userData = r.data.data.userList;
-        for (let user of this.userData){
-            user.key = "" + user.id
-            user.chosen = false
+        for (let user of this.userData) {
+          user.key = "" + user.id;
+          user.chosen = false;
         }
       });
     },
     handleChange(targetKeys, direction, moveKeys) {
-      console.log("team1",targetKeys, direction, moveKeys);
+      console.log("team1", targetKeys, direction, moveKeys);
       this.targetKeys1 = targetKeys;
     },
     handleChange2(targetKeys, direction, moveKeys) {
-      console.log("team2",targetKeys, direction, moveKeys);
+      console.log("team2", targetKeys, direction, moveKeys);
       this.targetKeys2 = targetKeys;
     },
   },

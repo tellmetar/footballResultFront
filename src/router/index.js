@@ -11,11 +11,15 @@ export default new VueRouter({
             meta: {
               title: "Auto Vue"
             },
+        },        
+        {
+            path: '/',
+            redirect: 'user'
         },
         {
-            path: '/home',
-            name: 'home',
-            component: () => import("@/components/home")
+            path: '/user',
+            name: 'user',
+            component: () => import("@/components/user")
         },
         {
             path: '/addResult',

@@ -1,8 +1,15 @@
 <template>
   <div class="home">
-        <h3 :style="{ margin: '16px 0' }">
-            战绩
-        </h3>
+    <a-menu mode="horizontal">
+      <a-menu-item key="mail">
+        <a-icon type="usergroup-add" /> <router-link to="/user">球员管理</router-link>
+      </a-menu-item>
+      <a-menu-item key="app">
+        <a-icon type="profile" />
+        <router-link to="/result">战绩管理 </router-link>
+      </a-menu-item>
+    </a-menu>
+    <h3 :style="{ margin: '16px 0' }">战绩</h3>
     <div id="components-form-demo-advanced-search">
       <a-form-model layout="inline" class="ant-advanced-search-form" :model="q">
         <a-row>
@@ -47,64 +54,55 @@
           <span slot="action" slot-scope="text, record">
             <!-- <a-divider type="vertical" /> -->
             <button @click="del(text, record)">Delete</button>
-            <!-- <a-divider type="vertical" /> -->
+            <a-divider type="vertical" />
+            <button @click="edit(text, record)">Edit</button>
             <!-- <a class="ant-dropdown-link"> More actions <a-icon type="down" /> </a> -->
           </span>
         </a-table>
       </a-row>
     </div>
 
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
 
-
-        <h3 :style="{ margin: '16px 0' }">
-            个人积分
-        </h3>
+    <h3 :style="{ margin: '16px 0' }">个人积分</h3>
     <div>
-        <a-form-model layout="inline" class="ant-advanced-search-form" :model="q">
-            <a-row>
-                <a-col>
-                    <a-form-item>
-                        <a-select
-                            show-search
-                            placeholder="Select a person"
-                            option-filter-prop="children"
-                            style="width: 200px"
-                            :filter-option="filterOption"
-                            v-model="q.uid"
-                        >
-                            <a-select-option v-for="d in userList" :key="d.id">
-                            {{ d.name }}
-                            </a-select-option>
-                        </a-select>
-                    </a-form-item>
+      <a-form-model layout="inline" class="ant-advanced-search-form" :model="q">
+        <a-row>
+          <a-col>
+            <a-form-item>
+              <a-select
+                show-search
+                placeholder="Select a person"
+                option-filter-prop="children"
+                style="width: 200px"
+                v-model="q.uid"
+              >
+                <a-select-option v-for="d in userList" :key="d.id">
+                  {{ d.name }}
+                </a-select-option>
+              </a-select>
+            </a-form-item>
 
-                    <a-button type="primary" @click="handleChange"> Search </a-button>
-                    <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
-                    Clear
-                    </a-button>
-                </a-col>
-            </a-row>
+            <a-button type="primary" @click="handleChange"> Search </a-button>
+            <a-button :style="{ marginLeft: '8px' }" @click="handleReset">
+              Clear
+            </a-button>
+          </a-col>
+        </a-row>
       </a-form-model>
     </div>
 
-
     <div>
       <a-row>
-        <a-table
-          :columns="winningColumns"
-          :data-source="WinningList"
-        >
+        <a-table :columns="winningColumns" :data-source="WinningList" :pagination="paginationOpt2">
           <span slot="uid" slot-scope="text"> {{ displayName(text) }} </span>
         </a-table>
       </a-row>
     </div>
-
-
   </div>
 </template>
 
@@ -154,8 +152,6 @@ const winningColumns = [
     dataIndex: "personalPoints",
     key: "personalPoints",
   },
-
-
 ];
 const columns = [
   {
@@ -240,6 +236,26 @@ export default {
           this.getResult();
         },
       },
+      paginationOpt2: {
+        defaultCurrent: 1, // 默认当前页数
+        defaultPageSize: 5, // 默认当前页显示数据的大小
+        total: 0, // 总数，必须先有
+        showSizeChanger: true,
+        showQuickJumper: true,
+        pageSizeOptions: ["5", "10", "15", "20"],
+        showTotal: (total) => `共 ${total} 条`, // 显示总数
+        onShowSizeChange: (current, pageSize) => {
+          this.paginationOpt2.defaultCurrent = 1;
+          this.paginationOpt2.defaultPageSize = pageSize;
+          this.getResult(); //显示列表的接口名称
+        },
+        // 改变每页数量时更新显示
+        onChange: (current, size) => {
+          this.paginationOpt2.defaultCurrent = current;
+          this.paginationOpt2.defaultPageSize = size;
+          this.getResult();
+        },
+      },
       loading: false,
     };
   },
@@ -251,13 +267,13 @@ export default {
   },
   methods: {
     handleChange(value) {
-      console.log(`selected ${value}`)
-      this.getWinningRates()
+      console.log(`selected ${value}`);
+      this.getWinningRates();
     },
     getWinningRates() {
       getWinningRateApi(this.q).then((r) => {
         console.log(r);
-        this.WinningList.push(r.data.data)
+        this.WinningList.push(r.data.data);
       });
     },
     jumpToAddResult() {
@@ -284,6 +300,9 @@ export default {
     },
 
     del() {},
+    edit(a, r){
+        this.$router.push({path:"/addResult", query: {id: r.id}})
+    },
     handleReset() {
       this.q = {};
     },
@@ -294,14 +313,17 @@ export default {
         page: this.paginationOpt.defaultCurrent,
         size: this.paginationOpt.defaultPageSize,
       }).then((r) => {
-        console.log(r);
+        // console.log(r);
         const paginationOpt = { ...this.paginationOpt };
         paginationOpt.total = r.data.data.total;
         this.loading = false;
         this.paginationOpt = paginationOpt;
         console.log("this.pag", this.paginationOpt);
         this.ResultList = r.data.data;
-      });
+        for (let u of this.ResultList){
+          u.key = u.id
+        }
+      })
     },
   },
 };

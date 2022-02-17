@@ -52,6 +52,9 @@ export async function createResultApi(data) {
 export async function getResultApi(data) {
   return request(`${BASE_URL}/result`, METHOD.GET, data)
 }
+export async function getResultDetailApi(id) {
+  return request(`${BASE_URL}/result/${id}`, METHOD.GET)
+}
 
 export async function getWinningRateApi(data) {
   return request(`${BASE_URL}/winningRate`, METHOD.GET, data)
