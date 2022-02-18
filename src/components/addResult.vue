@@ -323,10 +323,10 @@ export default {
         }
         if (r.data && r.data.team) {
           for (const e of r.data.team) {
-            if (e.team == 1) {
+            if (e.team == 1 && this.targetKeys1.indexOf(e.uid + "") == -1) {
               this.targetKeys1.push(e.uid + "");
             }
-            if (e.team == 2) {
+            if (e.team == 2 && this.targetKeys2.indexOf(e.uid + "") == -1) {
               this.targetKeys2.push(e.uid + "");
             }
           }
