@@ -66,29 +66,24 @@
 
     <br />
 
-    <a-form-model
-      :model="form"
-      :label-col="{ span: 9 }"
-      :wrapper-col="{ span: 1 }"
-    >
-      <a-form-model-item label="轮数">
-        <a-input-number :disabled="isEdit" v-model="form.round" />
-      </a-form-model-item>
+    <a-form-model :model="form">
+      <a-row type="flex" justify="space-around" align="middle">
+        <a-col :span="4">
+          <a-form-model-item label="轮数">
+            <a-input-number :disabled="isEdit" v-model="form.round" />
+          </a-form-model-item>
+        </a-col>
+      </a-row>
       <a-form-model-item label="比赛日">
-        <a-date-picker @change="onChangeDate" />
+        <a-date-picker v-model="form.date" @change="onChangeDate" />
       </a-form-model-item>
       <a-form-model-item label="队长1">
         <a-select
           show-search
-          :value="form.captain1_uid"
+          v-model="form.captain1_uid"
           placeholder="input search text"
           style="width: 200px"
-          :default-active-first-option="false"
-          :show-arrow="false"
-          :filter-option="false"
-          :not-found-content="null"
-          @search="handleSearch1"
-          @change="handleChangeCaptain1"
+          option-filter-prop="children"
         >
           <a-select-option v-for="d in userData" :key="d.id">
             {{ d.name }}
@@ -98,15 +93,10 @@
       <a-form-model-item label="队长2">
         <a-select
           show-search
-          :value="form.captain2_uid"
+          v-model="form.captain2_uid"
           placeholder="input search text"
           style="width: 200px"
-          :default-active-first-option="false"
-          :show-arrow="false"
-          :filter-option="false"
-          :not-found-content="null"
-          @search="handleSearch2"
-          @change="handleChangeCaptain2"
+          option-filter-prop="children"
         >
           <a-select-option v-for="d in userData" :key="d.id">
             {{ d.name }}
@@ -127,20 +117,152 @@
       </a-form-model-item>
 
       <a-form-model-item label="比分">
-        <a-input v-model="form.score" />
+        <a-input-number size="large" v-model="form.score1" />
+        :
+        <a-input-number size="large" v-model="form.score2" />
       </a-form-model-item>
 
-      <button @click="confirm">确认</button>
-      <button><router-link to="/result">取消</router-link></button>
+      <a-form-model-item label="备注">
+        <a-textarea
+          v-model="form.remark"
+          placeholder="记录下你的备注吧"
+          :rows="3"
+        />
+      </a-form-model-item>
+
+      <a-form-model-item>
+        <a-button class="editable-add-btn" @click="handleAdd"> 新增进球者⚽ </a-button>
+        <a-table bordered :data-source="scoreList" :columns="columns">
+          <template slot="name" slot-scope="text, record">
+            <a-select
+              show-search
+              v-model="record.uid"
+              placeholder="input search text"
+              style="width: 200px"
+              option-filter-prop="children"
+            >
+              <a-select-option v-for="d in userData" :key="d.id">
+                {{ d.name }}
+              </a-select-option>
+            </a-select>
+
+          </template>
+          <template slot="score" slot-scope="text, record">
+              <a-input-number size="large" v-model="record.score" />
+          </template>
+          <template slot="operation" slot-scope="text, record">
+            <a-popconfirm
+              v-if="scoreList.length"
+              title="Sure to delete?"
+              @confirm="() => onDelete(record.key)"
+            >
+              <a href="javascript:;">Delete</a>
+            </a-popconfirm>
+          </template>
+        </a-table>
+      </a-form-model-item>
+
+      <a-form-model-item>
+        <a-button class="editable-add-btn" @click="handleAddAssist"> 新增助攻者👍 </a-button>
+        <a-table bordered :data-source="assistList" :columns="assistColumns">
+          <template slot="name" slot-scope="text, record">
+            <a-select
+              show-search
+              v-model="record.uid"
+              placeholder="input search text"
+              style="width: 200px"
+              option-filter-prop="children"
+            >
+              <a-select-option v-for="d in userData" :key="d.id">
+                {{ d.name }}
+              </a-select-option>
+            </a-select>
+
+          </template>
+          <template slot="assist" slot-scope="text, record">
+              <a-input-number size="large" v-model="record.assist" />
+          </template>
+          <template slot="operation" slot-scope="text, record">
+            <a-popconfirm
+              v-if="assistList.length"
+              title="Sure to delete?"
+              @confirm="() => onDeleteAssist(record.key)"
+            >
+              <a href="javascript:;">Delete</a>
+            </a-popconfirm>
+          </template>
+        </a-table>
+      </a-form-model-item>
+
+      <a-form-model-item>
+        <a-space>
+          <a-button type="primary" size="large" @click="confirm" block
+            >确认</a-button
+          >
+          <a-button size="large"
+            ><router-link to="/result">取消</router-link></a-button
+          >
+        </a-space>
+      </a-form-model-item>
     </a-form-model>
+    <br />
+    <br />
+    <br />
+      <div>
+    <a-back-top />
   </div>
+  </div>
+
 </template>
 <script>
-import { getUser, createResultApi, getResultDetailApi } from "../services/user";
+import {
+  getUser,
+  createResultApi,
+  getResultDetailApi,
+  putResultApi,
+} from "../services/user";
 
 export default {
   data() {
     return {
+      scoreList:[],
+      count: 1,
+      assistList: [],
+      assistCount: 1,
+      columns: [
+        {
+          title: "队员",
+          dataIndex: "name",
+          scopedSlots: { customRender: "name" },
+        },
+        {
+          title: "进球数⚽",
+          dataIndex: "score",
+          scopedSlots: { customRender: "score" },
+        },
+        {
+          title: "operation",
+          dataIndex: "operation",
+          scopedSlots: { customRender: "operation" },
+        },
+      ],
+      assistColumns: [
+        {
+          title: "队员",
+          dataIndex: "name",
+          scopedSlots: { customRender: "name" },
+        },
+        {
+          title: "助攻数👍",
+          dataIndex: "assist",
+          scopedSlots: { customRender: "assist" },
+        },
+        {
+          title: "operation",
+          dataIndex: "operation",
+          scopedSlots: { customRender: "operation" },
+        },
+      ],
       isEdit: false,
       form: {
         captain1_uid: undefined,
@@ -162,6 +284,34 @@ export default {
     this.getUserList();
   },
   methods: {
+    handleAddAssist() {
+      const { assistCount, assistList } = this;
+      const newData = {
+        key: assistCount,
+        uid: undefined,
+        assist: undefined,
+      };
+      this.assistList = [...assistList, newData];
+      this.assistCount = assistCount + 1;
+    },
+    handleAdd() {
+      const { count, scoreList } = this;
+      const newData = {
+        key: count,
+        uid: undefined,
+        score: undefined,
+      };
+      this.scoreList = [...scoreList, newData];
+      this.count = count + 1;
+    },
+    onDeleteAssist(key) {
+      const assistList = [...this.assistList];
+      this.assistList = assistList.filter(item => item.key !== key);
+    },
+    onDelete(key) {
+      const scoreList = [...this.scoreList];
+      this.scoreList = scoreList.filter(item => item.key !== key);
+    },
     getResultDetail() {
       getResultDetailApi(this.$route.query.id).then((r) => {
         if (r.data && r.data.result) {
@@ -181,23 +331,30 @@ export default {
             }
           }
         }
+        if (r.data && r.data.scoreList){
+          this.scoreList = r.data.scoreList
+        }
+        if (r.data && r.data.assistList){
+          this.assistList = r.data.assistList
+        }
         console.log(this.targetKeys1, "===========");
       });
     },
     confirm() {
-      if (!this.form.round) {
-        this.$message.error("把第几轮填下");
-      } else {
-        createResultApi({
+      console.log("scoreList", this.scoreList)
+      this.form.scoreList = this.scoreList
+      this.form.assistList = this.assistList
+      if (this.isEdit) {
+        putResultApi({
           ...this.form,
           team1: this.targetKeys1,
           team2: this.targetKeys2,
         })
           .then((r) => {
             if (r.status == 200 && r.data.code == 200) {
-              this.$message.success("添加成功");
+              this.$message.success("修改成功");
               console.log("r", r);
-              this.$router.push("/result");
+              // this.$router.push("/result");
             } else {
               this.$message.error(r.data.data);
             }
@@ -206,21 +363,35 @@ export default {
             console.log("e", e);
             this.$message.error("系统错误,请不要联系ivan");
           });
+      } else {
+        if (!this.form.round) {
+          this.$message.error("把第几轮填下,唯一必填字段,檀檀");
+        } else {
+          createResultApi({
+            ...this.form,
+            team1: this.targetKeys1,
+            team2: this.targetKeys2,
+          })
+            .then((r) => {
+              if (r.status == 200 && r.data.code == 200) {
+                this.$message.success("添加成功");
+                console.log("r", r);
+                this.$router.push("/result");
+              } else {
+                this.$message.error(r.data.data);
+              }
+            })
+            .catch((e) => {
+              console.log("e", e);
+              this.$message.error("系统错误,请不要联系ivan");
+            });
+        }
       }
     },
     onChangeDate(value, s) {
       console.log(value);
       this.form.date = s;
     },
-    handleChangeCaptain1(value) {
-      console.log("value", value);
-      this.form.captain1_uid = value;
-    },
-    handleChangeCaptain2(value) {
-      this.form.captain2_uid = value;
-    },
-    handleSearch1() {},
-    handleSearch2() {},
     handleChangeResult(v) {
       this.result = v;
     },
@@ -247,3 +418,8 @@ export default {
   },
 };
 </script>
+<style>
+.editable-add-btn {
+  margin-bottom: 8px;
+}
+</style>

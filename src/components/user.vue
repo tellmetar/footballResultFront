@@ -169,7 +169,6 @@ export default {
         paginationOpt.total = r.data.data.total;
         this.loading = false;
         this.paginationOpt = paginationOpt;
-        console.log("this.pag", this.paginationOpt);
         this.userList = r.data.data.userList;
         for (let u of this.userList){
           u.key = u.id
@@ -201,7 +200,6 @@ export default {
       });
     },
     handleCancel() {
-      console.log("Clicked cancel button");
       this.visible = false;
     },
   },

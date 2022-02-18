@@ -55,6 +55,9 @@
           <span slot="result" slot-scope="text">
             {{ displayResult(text) }}
           </span>
+          <span slot="score" slot-scope="text, record">
+            {{ record.score1 }}: {{record.score2}}
+          </span>
           <span slot="action" slot-scope="text, record">
             <!-- <a-divider type="vertical" /> -->
             <button @click="del(text, record)">Delete</button>
@@ -199,6 +202,7 @@ const columns = [
     title: "比分",
     dataIndex: "score",
     key: "score",
+    scopedSlots: { customRender: "score" },
   },
   {
     title: "备注",
@@ -317,7 +321,6 @@ export default {
         page: 1,
         size: 150,
       }).then((r) => {
-        console.log(r);
         this.userList = r.data.data.userList;
       });
     },
@@ -343,13 +346,9 @@ export default {
         page: this.paginationOpt.defaultCurrent,
         size: this.paginationOpt.defaultPageSize,
       }).then((r) => {
-        // console.log(r);
-        const paginationOpt = { ...this.paginationOpt };
-        paginationOpt.total = r.data.data.total;
+        this.paginationOpt.total = r.data.data.total;
         this.loading = false;
-        this.paginationOpt = paginationOpt;
-        console.log("this.pag", this.paginationOpt);
-        this.ResultList = r.data.data;
+        this.ResultList = r.data.data.list;
         for (let u of this.ResultList) {
           u.key = u.id;
         }

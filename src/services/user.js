@@ -52,6 +52,11 @@ export async function createResultApi(data) {
 export async function getResultApi(data) {
   return request(`${BASE_URL}/result`, METHOD.GET, data)
 }
+
+export async function putResultApi(data) {
+  return request(`${BASE_URL}/result`, METHOD.PUT, data)
+}
+
 export async function getResultDetailApi(id) {
   return request(`${BASE_URL}/result/${id}`, METHOD.GET)
 }
