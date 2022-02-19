@@ -33,6 +33,10 @@
         <a-col>
           <a-space>
             <a-button type="primary" @click="showModal"> 新增队员 </a-button>
+            <a-button type="primary" @click="exportStat"> 导出报表 </a-button>
+            <!-- <a-button type="primary" @click="getWinningRates">
+              更新胜率
+            </a-button>           -->
           </a-space>
         </a-col>
       </a-row>
@@ -48,12 +52,12 @@
           <a slot="name" slot-scope="text">{{ text }}</a>
           <span slot="customTitle"><a-icon type="smile-o" /> Name</span>
 
-          <span slot="action" slot-scope="text, record">
+          <!-- <span slot="action" slot-scope="text, record"> -->
             <!-- <a-divider type="vertical" /> -->
-            <button @click="del(text,record)">Delete</button>
+            <!-- <button @click="del(text,record)">Delete</button> -->
             <!-- <a-divider type="vertical" /> -->
             <!-- <a class="ant-dropdown-link"> More actions <a-icon type="down" /> </a> -->
-          </span>
+          <!-- </span> -->
         </a-table> 
       </a-row>
     </div>
@@ -84,9 +88,10 @@
   </div>
 </template>
 
+
 <script>
-import { getUser, createUserApi } from "../services/user";
-// import { MyMenu } from "./menu.vue";
+import XLSX from "xlsx";
+import { getUser, createUserApi, getWinningRateApi } from "../services/user";
 const columns = [
   {
     dataIndex: "name",
@@ -98,7 +103,72 @@ const columns = [
     title: "Number",
     dataIndex: "number",
     key: "number",
+    defaultSortOrder: 'descend',
+    sorter: (a, b) => a.number - b.number,
   },
+    {
+      title: "胜率",
+      dataIndex: "winningRate",
+      key: "winningRate",
+          defaultSortOrder: 'descend',
+    sorter: (a, b) => a.winningRate - b.winningRate,
+    },
+  {
+    title: "进球数",
+    dataIndex: "score",
+    key: "score",
+    defaultSortOrder: 'descend',
+    sorter: (a, b) => a.score - b.score,
+  },
+  {
+    title: "助攻数",
+    dataIndex: "assist",
+    key: "assist",
+    defaultSortOrder: 'descend',
+    sorter: (a, b) => a.assist - b.assist,
+  },
+  {
+    title: "出战场次",
+    dataIndex: "gameAttend",
+    key: "gameAttend",
+    defaultSortOrder: 'descend',
+    sorter: (a, b) => a.gameAttend - b.gameAttend,
+  },
+  {
+    title: "获胜场次",
+    dataIndex: "winGames",
+    key: "winGames",
+    defaultSortOrder: 'descend',
+    sorter: (a, b) => a.winGames - b.winGames,
+  },
+  {
+    title: "落败场次",
+    dataIndex: "loseGames",
+    key: "loseGames",
+    defaultSortOrder: 'descend',
+    sorter: (a, b) => a.loseGames - b.loseGames,
+},
+  {
+    title: "平局场次",
+    dataIndex: "drawGames",
+    key: "drawGames",
+        defaultSortOrder: 'descend',
+    sorter: (a, b) => a.drawGames - b.drawGames,
+  },
+    {
+      title: "不败率",
+      dataIndex: "unDefeatedRate",
+      key: "unDefeatedRate",
+          defaultSortOrder: 'descend',
+    sorter: (a, b) => a.unDefeatedRate - b.unDefeatedRate,
+    },
+    {
+      title: "个人积分",
+      dataIndex: "personalPoints",
+      key: "personalPoints",
+          defaultSortOrder: 'descend',
+    sorter: (a, b) => a.personalPoints - b.personalPoints,
+    },
 
   {
     title: "Action",
@@ -129,7 +199,7 @@ export default {
         total: 0, // 总数，必须先有
         showSizeChanger: true,
         showQuickJumper: true,
-        pageSizeOptions: ["5", "10", "15", "20"],
+        pageSizeOptions: ["5", "10", "15", "20", "150"],
         showTotal: (total) => `共 ${total} 条`, // 显示总数
         onShowSizeChange: (current, pageSize) => {
           this.paginationOpt.defaultCurrent = 1;
@@ -150,6 +220,17 @@ export default {
     this.getUserList({ page: 1, size: 10 });
   },
   methods: {
+    exportStat(){
+      console.log("--------", this.userList)
+      const sheet = XLSX.utils.json_to_sheet(this.userList)
+      let book = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(book, sheet, "hhh")
+      console.log("--------", sheet)
+      XLSX.writeFile(book, '导出.xlsx')
+    },
+    getWinningRates() {
+      getWinningRateApi()
+    },
     del(){
 
     },

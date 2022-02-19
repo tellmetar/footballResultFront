@@ -34,6 +34,9 @@
             <a-button type="primary" @click="jumpToAddResult">
               新增战况
             </a-button>
+            <!-- <a-button type="primary" @click="getWinningRates">
+              更新胜率
+            </a-button> -->
           </a-space>
         </a-col>
       </a-row>
@@ -282,18 +285,11 @@ export default {
   created() {
     this.getResult({ page: 1, size: 10 });
     this.getUserList();
-    this.getWinningRates();
   },
   methods: {
-    handleChange(value) {
-      console.log(`selected ${value}`);
-      this.getWinningRates();
-    },
+
     getWinningRates() {
-      getWinningRateApi(this.qu).then((r) => {
-        // console.log(r);
-        this.WinningList.push(r.data.data);
-      });
+      getWinningRateApi()
     },
     jumpToAddResult() {
       this.$router.push("/addResult");
@@ -337,7 +333,6 @@ export default {
     handleReset2() {
       this.qu = {};
       this.paginationOpt2.defaultCurrent = 1;
-      this.getWinningRates();
     },
     getResult() {
       this.loading = true;

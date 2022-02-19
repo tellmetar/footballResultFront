@@ -220,6 +220,7 @@ import {
   createResultApi,
   getResultDetailApi,
   putResultApi,
+  getWinningRateApi
 } from "../services/user";
 
 export default {
@@ -340,6 +341,9 @@ export default {
         console.log(this.targetKeys1, "===========");
       });
     },
+    getWinningRates() {
+      getWinningRateApi()
+    },
     confirm() {
       console.log("scoreList", this.scoreList)
       this.form.scoreList = this.scoreList
@@ -353,6 +357,7 @@ export default {
           .then((r) => {
             if (r.status == 200 && r.data.code == 200) {
               this.$message.success("修改成功");
+              this.getWinningRates()
               console.log("r", r);
               // this.$router.push("/result");
             } else {
@@ -375,6 +380,7 @@ export default {
             .then((r) => {
               if (r.status == 200 && r.data.code == 200) {
                 this.$message.success("添加成功");
+                this.getWinningRates()
                 console.log("r", r);
                 this.$router.push("/result");
               } else {
