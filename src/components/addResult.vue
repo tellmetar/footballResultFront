@@ -77,7 +77,7 @@
       <a-form-model-item label="比赛日">
         <a-date-picker v-model="form.date" @change="onChangeDate" />
       </a-form-model-item>
-      <a-form-model-item label="队长1">
+      <a-form-model-item label="队长1橙">
         <a-select
           show-search
           v-model="form.captain1_uid"
@@ -90,7 +90,7 @@
           </a-select-option>
         </a-select>
       </a-form-model-item>
-      <a-form-model-item label="队长2">
+      <a-form-model-item label="队长2黑">
         <a-select
           show-search
           v-model="form.captain2_uid"

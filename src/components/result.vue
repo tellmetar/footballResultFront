@@ -78,7 +78,7 @@
     <br />
     <br />
 
-    <h3 :style="{ margin: '16px 0' }">个人积分</h3>
+    <!-- <h3 :style="{ margin: '16px 0' }">个人积分</h3>
     <div>
       <a-form-model
         layout="inline"
@@ -120,7 +120,7 @@
           <span slot="uid" slot-scope="text"> {{ displayName(text) }} </span>
         </a-table>
       </a-row>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -184,13 +184,13 @@ const columns = [
     key: "date",
   },
   {
-    title: "队长1",
+    title: "队长1橙",
     dataIndex: "captain1_uid",
     key: "captain1_uid",
     scopedSlots: { customRender: "captain1_uid" },
   },
   {
-    title: "队长2",
+    title: "队长2黑",
     dataIndex: "captain2_uid",
     key: "captain2_uid",
     scopedSlots: { customRender: "captain2_uid" },
