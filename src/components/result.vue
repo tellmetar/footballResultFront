@@ -240,7 +240,7 @@ export default {
       qu: {},
       paginationOpt: {
         defaultCurrent: 1, // 默认当前页数
-        defaultPageSize: 5, // 默认当前页显示数据的大小
+        defaultPageSize: 10, // 默认当前页显示数据的大小
         total: 0, // 总数，必须先有
         showSizeChanger: true,
         showQuickJumper: true,

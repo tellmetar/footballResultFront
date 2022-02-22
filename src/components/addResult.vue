@@ -359,7 +359,7 @@ export default {
               this.$message.success("修改成功");
               this.getWinningRates()
               console.log("r", r);
-              // this.$router.push("/result");
+              this.$router.push("/result");
             } else {
               this.$message.error(r.data.data);
             }
